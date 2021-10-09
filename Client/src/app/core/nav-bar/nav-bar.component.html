@@ -13,11 +13,25 @@
     fixed-top
   "
 >
-  <img src="/assets/images/logo.png" style="max-height: 70px" alt="logo" />
+  <img
+    role="button"
+    src="/assets/images/logo.png"
+    style="max-height: 70px"
+    alt="logo"
+    routerLink="/"
+  />
   <nav class="my-2 my-md-0 mr-md-3 text-uppercase" style="font-size: larger">
-    <a class="p-2 text-dark" href="#">Home</a>
-    <a class="p-2 text-dark" href="#">Shop</a>
-    <a class="p-2 text-dark" href="#">Contact</a>
+    <a
+      class="p-2"
+      [routerLink]="['/']"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Home</a
+    >
+    <a class="p-2" [routerLink]="['/shop']" routerLinkActive="active">Shop</a>
+    <a class="p-2" [routerLink]="['/test-error']" routerLinkActive="active"
+      >Errors</a
+    >
   </nav>
   <div class="d-flex align-items-center">
     <a class="position-relative">
