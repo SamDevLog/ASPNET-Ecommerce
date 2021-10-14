@@ -15,6 +15,8 @@ namespace API.Helpers {
                 .ForMember (x => x.ProductType, d => d.MapFrom (s => s.ProductType.Name))
                 .ForMember (x => x.PictureUrl, d => d.MapFrom<ProductUrlResolver> ());
             CreateMap<Address, AddressDto> ().ReverseMap ();
+            CreateMap<CustomerBasketDto, CustomerBasket> ();
+            CreateMap<BasketItemDto, BasketItem> ();
         }
     }
 }
