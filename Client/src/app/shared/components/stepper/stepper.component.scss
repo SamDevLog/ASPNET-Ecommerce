@@ -1,0 +1,23 @@
+button.nav-link {
+  background: #e9ecef;
+  border-radius: 0;
+  border: none;
+  color: black;
+
+  &:hover {
+    color: black;
+  }
+
+  &:focus {
+    outline: none;
+  }
+  &.active:hover {
+    color: white;
+  }
+  & :active {
+    outline: none;
+  }
+  &.active:focus {
+    outline: none;
+  }
+}
