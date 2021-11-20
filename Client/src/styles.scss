@@ -13,6 +13,11 @@ label.xng-breadcrumb-trail {
 .xng-breadcrumb-seperator {
   padding: 0 0;
 }
+
+.StripeElement {
+  height: 3.125em !important;
+}
+
 /* Importing Bootstrap SCSS file. */
 @import "~bootstrap/scss/bootstrap";
 

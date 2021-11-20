@@ -15,7 +15,7 @@ import { JwtInterceptor } from './core/Interceptors/jwt.interceptor';
 import { OrdersComponent } from './orders/orders.component';
 
 @NgModule({
-  declarations: [AppComponent, OrdersComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

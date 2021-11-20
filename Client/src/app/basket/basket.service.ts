@@ -18,30 +18,48 @@ import { IProduct } from '../shared/models/product';
 export class BasketService {
   baseUrl = environment.apiUrl;
   private basketSource = new BehaviorSubject<IBasket>(null);
-  private basketTotalSource = new BehaviorSubject<IBasketTotals>(null);
   basket$ = this.basketSource.asObservable();
+  private basketTotalSource = new BehaviorSubject<IBasketTotals>(null);
   basketTotal$ = this.basketTotalSource.asObservable();
   shipping = 0;
 
   constructor(private http: HttpClient) {}
 
+  createPaymentIntent() {
+    return this.http
+      .post<IBasket>(
+        this.baseUrl + 'payments/' + this.getCurrentBasketValue().id,
+        {}
+      )
+      .pipe(
+        map((basket: IBasket) => {
+          this.basketSource.next(basket);
+        })
+      );
+  }
+
   setShippingPrice(deliveryMethod: IDeliveryMethod) {
     this.shipping = deliveryMethod.price;
+    const basket = this.getCurrentBasketValue();
+    basket.deliveryMethodId = deliveryMethod.id;
+    basket.shippingPrice = deliveryMethod.price;
     this.calculateTotals();
+    this.setBasket(basket);
   }
 
   getBasket(id: string) {
-    return this.http.get(this.baseUrl + 'basket?id=' + id).pipe(
-      map((basket: any) => {
+    return this.http.get<IBasket>(this.baseUrl + 'basket?id=' + id).pipe(
+      map((basket: IBasket) => {
         this.basketSource.next(basket);
+        this.shipping = basket.shippingPrice;
         this.calculateTotals();
       })
     );
   }
 
   setBasket(basket: IBasket) {
-    return this.http.post(this.baseUrl + 'basket', basket).subscribe(
-      (response: any) => {
+    return this.http.post<IBasket>(this.baseUrl + 'basket', basket).subscribe(
+      (response: IBasket) => {
         this.basketSource.next(response);
         this.calculateTotals();
       },
@@ -142,7 +160,7 @@ export class BasketService {
   ): IBasketItem {
     return {
       id: item.id,
-      productName: item.name,
+      name: item.name,
       price: item.price,
       pictureUrl: item.pictureUrl,
       quantity,
@@ -156,6 +174,6 @@ export class BasketService {
     const shipping = this.shipping;
     const subtotal = basket.items.reduce((a, b) => b.price * b.quantity + a, 0);
     const total = subtotal + shipping;
-    this.basketTotalSource.next({ shipping, subtotal, total });
+    this.basketTotalSource.next({ shipping, total, subtotal });
   }
 }
