@@ -31,6 +31,7 @@ import { RouterModule } from '@angular/router';
     CdkStepperModule,
     FormsModule,
     RouterModule,
+    FormsModule,
   ],
   exports: [
     PaginationModule,
@@ -45,6 +46,7 @@ import { RouterModule } from '@angular/router';
     CdkStepperModule,
     StepperComponent,
     BasketSummaryComponent,
+    FormsModule,
   ],
 })
 export class SharedModule {}
