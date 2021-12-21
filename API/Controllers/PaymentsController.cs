@@ -9,6 +9,7 @@ using Core.Entities.OrderAggregate;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Order = Core.Entities.OrderAggregate.Order;
@@ -18,13 +19,14 @@ namespace API.Controllers
     public class PaymentsController : BaseApiController
     {
         private readonly IPaymentService _paymentService;
-        private readonly ILogger<PaymentsController> logger;
-        private const string WhSectret = "whsec_Ew8Wbt8lqc3psVUJ40GnVRX9gLvzbn4J";      //webhook secret
+        private readonly ILogger<PaymentsController> _logger;
+        private readonly string _whSecret;      //stripe webhook secret
 
-        public PaymentsController(IPaymentService paymentService, ILogger<PaymentsController> logger)
+        public PaymentsController(IPaymentService paymentService, ILogger<PaymentsController> logger, IConfiguration config)
         {
             _paymentService = paymentService;
-            this.logger = logger;
+            _logger = logger;
+            _whSecret = config.GetSection("StripeSettings:WhSecret").Value;
         }
 
         [Authorize]
@@ -43,7 +45,7 @@ namespace API.Controllers
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 
-            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], WhSectret);
+            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _whSecret);
 
             PaymentIntent intent;
             Order order;
@@ -52,15 +54,15 @@ namespace API.Controllers
             {
                 case "payment_intent.succeeded":
                     intent = (PaymentIntent)stripeEvent.Data.Object;
-                    logger.LogInformation("Payment Succeeded: ", intent.Id);
+                    _logger.LogInformation("Payment Succeeded: ", intent.Id);
                     order = await _paymentService.UpdateOrderPaymentSucceeded(intent.Id);
-                    logger.LogInformation("Order update to payment received: ", intent.Id);
+                    _logger.LogInformation("Order update to payment received: ", intent.Id);
                     break;
                 case "payment_intent.payment_failed":
                     intent = (PaymentIntent)stripeEvent.Data.Object;
-                    logger.LogInformation("Payment Failed: ", intent.Id);
+                    _logger.LogInformation("Payment Failed: ", intent.Id);
                     order = await _paymentService.UpdateOrderPaymentFailed(intent.Id);
-                    logger.LogInformation("Payment Failed: ", intent.Id);
+                    _logger.LogInformation("Payment Failed: ", intent.Id);
                     break;                
             }
 
