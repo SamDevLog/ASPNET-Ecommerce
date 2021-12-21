@@ -23,22 +23,20 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/Client",
+            "outputPath": "../API/wwwroot",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": [
-              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
-              "./node_modules/bootswatch/dist/superhero/bootstrap.min.css",
-              "./node_modules/font-awesome/css/font-awesome.min.css",
-              "src/styles.scss",
-              "./node_modules/ngx-toastr/toastr.css"
-            ],
-            "scripts": []
+            "styles": ["src/styles.scss"],
+            "scripts": [],
+            "optimization": {
+              "scripts": true,
+              "fonts": { "inline": true },
+              "styles": { "minify": true, "inlineCritical": false }
+            }
           },
           "configurations": {
             "production": {
